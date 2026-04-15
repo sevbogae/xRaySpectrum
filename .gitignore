@@ -1,0 +1,35 @@
+# --- uv / Python ---
+.venv/
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+.eggs/
+*.py[oc]
+wheels/
+*.egg-info
+
+# --- builds / artifacts ---
+build/
+dist/
+*.spec  # keep if you customize; otherwise ignore
+
+# --- tests / tools ---
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# --- IDE / OS ---
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+
+# --- logs / misc ---
+*.log
