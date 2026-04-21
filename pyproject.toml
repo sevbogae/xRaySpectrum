@@ -18,3 +18,8 @@ build-backend = "hatchling.build"
 
 [tool.uv]
 package = true
+
+[dependency-groups]
+dev = [
+    "pyinstaller>=6.19.0",
+]

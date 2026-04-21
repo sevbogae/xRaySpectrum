@@ -14,7 +14,7 @@ wheels/
 # --- builds / artifacts ---
 build/
 dist/
-*.spec  # keep if you customize; otherwise ignore
+# *.spec  — committed intentionally (needed to rebuild the exe)
 
 # --- tests / tools ---
 .pytest_cache/

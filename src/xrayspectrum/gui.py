@@ -57,24 +57,103 @@ class Tooltip:
             self._tip = None
 
 
-class AutocompleteCombobox(ttk.Combobox):
-    """Combobox that filters its dropdown list as the user types."""
+class AutocompleteEntry(ttk.Entry):
+    """Entry with a suggestion popup that never steals focus."""
 
     def __init__(self, parent, all_values: list[str], **kwargs):
         self._all_values = all_values
-        super().__init__(parent, values=all_values, **kwargs)
+        super().__init__(parent, **kwargs)
+        self._popup: tk.Toplevel | None = None
+        self._listbox: tk.Listbox | None = None
         self.bind("<KeyRelease>", self._on_key)
+        self.bind("<FocusOut>", self._on_focus_out)
+        self.bind("<Escape>", lambda _e: self._close())
+        self.bind("<Return>", self._confirm)
+        self.bind("<Down>", self._move_down)
+        self.bind("<Up>", self._move_up)
 
-    def _on_key(self, _event):
+    def _on_key(self, event):
+        if event.keysym in ("Down", "Up", "Return", "Escape", "Tab"):
+            return
         typed = self.get()
-        if typed:
-            filtered = [v for v in self._all_values if typed.lower() in v.lower()]
-        else:
-            filtered = self._all_values
-        self["values"] = filtered
-        # Keep dropdown open if there are matches
+        filtered = [v for v in self._all_values if v.lower().startswith(typed.lower())] if typed else self._all_values
         if filtered:
-            self.event_generate("<Down>")
+            self._show(filtered)
+        else:
+            self._close()
+
+    def _show(self, values):
+        if self._popup is None:
+            self._popup = tk.Toplevel(self)
+            self._popup.wm_overrideredirect(True)
+            self._popup.wm_attributes("-topmost", True)
+            sb = ttk.Scrollbar(self._popup, orient="vertical")
+            self._listbox = tk.Listbox(
+                self._popup, yscrollcommand=sb.set,
+                exportselection=False, takefocus=False,
+                activestyle="dotbox",
+            )
+            sb.config(command=self._listbox.yview)
+            self._listbox.pack(side="left", fill="both", expand=True)
+            sb.pack(side="right", fill="y")
+            self._listbox.bind("<ButtonRelease-1>", self._on_click)
+
+        self._listbox.delete(0, tk.END)
+        for v in values:
+            self._listbox.insert(tk.END, v)
+        self._listbox.config(height=min(8, len(values)))
+
+        self._popup.update_idletasks()
+        x = self.winfo_rootx()
+        y = self.winfo_rooty() + self.winfo_height()
+        w = max(self.winfo_width(), self._popup.winfo_reqwidth())
+        h = self._popup.winfo_reqheight()
+        self._popup.geometry(f"{w}x{h}+{x}+{y}")
+        self._popup.deiconify()
+
+    def _close(self):
+        if self._popup:
+            self._popup.destroy()
+            self._popup = None
+            self._listbox = None
+
+    def _on_focus_out(self, _event):
+        self.after(100, lambda: self._close() if self.focus_get() is not self else None)
+
+    def _on_click(self, _event):
+        self._pick()
+
+    def _confirm(self, _event):
+        if self._popup:
+            self._pick()
+            return "break"
+
+    def _pick(self):
+        if self._listbox:
+            sel = self._listbox.curselection()
+            if sel:
+                self.delete(0, tk.END)
+                self.insert(0, self._listbox.get(sel[0]))
+        self._close()
+        self.focus_set()
+
+    def _move_down(self, _event):
+        if self._listbox:
+            sel = self._listbox.curselection()
+            idx = (sel[0] + 1) if sel else 0
+            idx = min(idx, self._listbox.size() - 1)
+            self._listbox.selection_clear(0, tk.END)
+            self._listbox.selection_set(idx)
+            self._listbox.see(idx)
+        return "break"
+
+    def _move_up(self, _event):
+        if self._listbox and (sel := self._listbox.curselection()):
+            idx = max(sel[0] - 1, 0)
+            self._listbox.selection_clear(0, tk.END)
+            self._listbox.selection_set(idx)
+            self._listbox.see(idx)
+        return "break"
 
 
 class FiltrationRow:
@@ -84,9 +163,9 @@ class FiltrationRow:
 
         ttk.Label(self.frame, text="Material:", width=9, anchor="w").pack(side="left")
         self.material_var = tk.StringVar()
-        AutocompleteCombobox(
+        AutocompleteEntry(
             self.frame, all_values=FILTER_MATERIALS,
-            textvariable=self.material_var, width=30,
+            textvariable=self.material_var, width=32,
         ).pack(side="left", padx=(0, 8))
 
         ttk.Label(self.frame, text="Thickness (mm):", anchor="w").pack(side="left")
@@ -115,6 +194,9 @@ class XRaySpectrumApp(tk.Tk):
         super().__init__()
         self.title("X-Ray Spectrum Generator")
         self.resizable(True, True)
+        _ico = os.path.join(os.path.dirname(__file__), "spectrum_generator.ico")
+        if os.path.exists(_ico):
+            self.iconbitmap(_ico)
 
         self._filtration_rows: list[FiltrationRow] = []
         self._spectrum_data: tuple[np.ndarray, np.ndarray] | None = None
@@ -199,7 +281,7 @@ class XRaySpectrumApp(tk.Tk):
 
         self._fig, self._ax = plt.subplots(figsize=(7, 3.5), tight_layout=True)
         self._ax.set_xlabel("Energy (keV)")
-        self._ax.set_ylabel("Fluence per mAs (photons/mm²/mAs/keV)")
+        self._ax.set_ylabel("Fluence per mAs (photons/cm²/mAs/keV)")
         self._ax.set_title("X-Ray Spectrum")
         self._canvas = FigureCanvasTkAgg(self._fig, master=plot_lf)
         self._canvas.get_tk_widget().pack(fill="both", expand=True)
@@ -253,7 +335,7 @@ class XRaySpectrumApp(tk.Tk):
                 filtration_mm=filtration,
                 delta_kev=0.5,
             )
-            energies, intensities = spectrum.get_spectrum()
+            energies, intensities = spectrum.get_spectrum(flu=True, diff=True)
         except Exception as exc:
             messagebox.showerror("Spectrum error", str(exc))
             return
@@ -263,7 +345,7 @@ class XRaySpectrumApp(tk.Tk):
         self._ax.cla()
         self._ax.plot(energies, intensities, color="#2563eb", linewidth=1.2)
         self._ax.set_xlabel("Energy (keV)")
-        self._ax.set_ylabel("Fluence per mAs (photons/mm²/mAs/keV)")
+        self._ax.set_ylabel("Fluence per mAs (photons/cm²/mAs/keV)")
         filt_str = ", ".join(f"{m} {t} mm" for m, t in filtration) if filtration else "none"
         self._ax.set_title(f"{kvp} kVp  |  {target}  |  {angle}°  |  filtration: {filt_str}")
         self._ax.set_xlim(left=0)
@@ -310,7 +392,7 @@ class XRaySpectrumApp(tk.Tk):
                 filt_str = ", ".join(f"{m} {t} mm" for m, t in filtration) if filtration else "none"
                 f.write(f"# KVp={kvp}  Anode angle={angle} deg  Target={target}  Filtration={filt_str}\n")
             f.write(f"# kV step = {kv_step} keV\n")
-            f.write("# Energy (keV)\tFluence per mAs (photons/mm2/mAs/keV)\n")
+            f.write("# Energy (keV)\tFluence per mAs (photons/cm2/mAs/keV)\n")
             for e, i in zip(export_energies, export_intensities):
                 f.write(f"{e:.4f}\t{i:.6e}\n")
 
