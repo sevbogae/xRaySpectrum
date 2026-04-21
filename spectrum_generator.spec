@@ -6,7 +6,7 @@ block_cipher = None
 spekpy_datas = collect_data_files('spekpy')
 
 a = Analysis(
-    ['_entry.py'],
+    [os.path.join('src', 'xrayspectrum', 'gui.py')],
     pathex=[],
     binaries=[],
     datas=[
