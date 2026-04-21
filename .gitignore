@@ -34,3 +34,4 @@ Thumbs.db
 # --- logs / misc ---
 *.log
 /.claude/
+*/attenuation_coefficient.py
