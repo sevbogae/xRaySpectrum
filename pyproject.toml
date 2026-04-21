@@ -4,5 +4,17 @@ version = "0.1.0"
 description = "Add your description here"
 requires-python = ">=3.14"
 dependencies = [
+    "matplotlib>=3.9",
     "spekpy>=2.5.4",
+    "xraylib>=4.2.1",
 ]
+
+[project.scripts]
+xrayspectrum-gui = "xrayspectrum.gui:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv]
+package = true

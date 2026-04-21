@@ -286,12 +286,39 @@ wheels = [
 ]
 
 [[package]]
+name = "xraylib"
+version = "4.2.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "numpy" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/24/fd/444dc2034012ea33427c5c69d841ec7e8228ddcc7749bd4ed208ef65c638/xraylib-4.2.1.tar.gz", hash = "sha256:6ec503b1a9d2d0dc56df98c7d5581a76ab487fef9abf3116d18b64752fd4e4ab", size = 13195127, upload-time = "2025-12-21T11:32:44.699Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/75/44/c192888960dcbbaa69499583ce878990f8aa3cc4a15d3d3c90029180f540/xraylib-4.2.1-cp314-cp314-macosx_10_15_x86_64.whl", hash = "sha256:981fe1b9b1cbabb1673ea5a819f113eb1e54721c0d465e104fdc1feca3d6cf26", size = 15951488, upload-time = "2025-12-21T11:32:18.47Z" },
+    { url = "https://files.pythonhosted.org/packages/aa/a4/be4fbeeccb0ee2fe93d81e013b0c7971f6ffdead1db60c08bf11f5cbaaee/xraylib-4.2.1-cp314-cp314-macosx_11_0_arm64.whl", hash = "sha256:fc2900eed0356912c3d16a83a91938e67af76d0d4254e8ee3778ba1a81a53400", size = 16171125, upload-time = "2025-12-21T11:32:21.676Z" },
+    { url = "https://files.pythonhosted.org/packages/50/76/2e04a1aa60bc71649253b0d3507c4b123c52f2b1909f62b5e4933e0d62aa/xraylib-4.2.1-cp314-cp314-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:3042e991fe443620d27bfc485b7572f440ef9b4bb2d3a37e55d2ab1ee31144a5", size = 16286751, upload-time = "2025-12-21T11:32:24.1Z" },
+    { url = "https://files.pythonhosted.org/packages/69/a0/f89531cc898da313acbc4f24d967e3566b4b8edaf4ecc960c74072809577/xraylib-4.2.1-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:e2c34a3f84fb38ab31b98e88eeebd20a77692c21555e4d0d7e4579a1aff65de3", size = 16327482, upload-time = "2025-12-21T11:32:26.974Z" },
+    { url = "https://files.pythonhosted.org/packages/e3/69/093211cccac0761fe615315ceeb4157da16e07719a8acb156feb68293f6d/xraylib-4.2.1-cp314-cp314-win_amd64.whl", hash = "sha256:31883da0fbba7600973aff4ce49377798167d1ebb11c4fbf0190db9882cdcea6", size = 14919860, upload-time = "2025-12-21T11:32:29.71Z" },
+    { url = "https://files.pythonhosted.org/packages/35/80/c043c0f3d85c248f7397826a79ddb54c4e9c06c0fc23dd65672bb33c303d/xraylib-4.2.1-cp314-cp314t-macosx_10_15_x86_64.whl", hash = "sha256:f0869d1468e03020ca79a4032c16772f7c604329cb0d9843b90b494998cda325", size = 15960513, upload-time = "2025-12-21T11:32:32.068Z" },
+    { url = "https://files.pythonhosted.org/packages/f9/e7/71a62321e3a957aa7c4a9797c4992a5811be6fe481377487a135ce7ef47a/xraylib-4.2.1-cp314-cp314t-macosx_11_0_arm64.whl", hash = "sha256:0bc8a92e4d606cbc60ff805d09388903067ea2f12e8c96f91dff2c4ca87f8e2d", size = 16180035, upload-time = "2025-12-21T11:32:34.459Z" },
+    { url = "https://files.pythonhosted.org/packages/f5/79/3c6966d3e4580da7b3a629f5d564f3a1a98231ef0f4966c5170996408e1e/xraylib-4.2.1-cp314-cp314t-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:03c987598d2d062681a32f1b3b64001c6de40a392e2dd22d59fb8d94f3b6f544", size = 16292005, upload-time = "2025-12-21T11:32:36.944Z" },
+    { url = "https://files.pythonhosted.org/packages/1d/40/887c6c2e94b5a92c5c7ba04c9f3ba218674e7751b75ffd4628b06d6c6053/xraylib-4.2.1-cp314-cp314t-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:f23afbe8fc9fb8382402365e8b487834e7b4c02bf174b1c8a3573fcf28ca3f25", size = 16330388, upload-time = "2025-12-21T11:32:39.203Z" },
+    { url = "https://files.pythonhosted.org/packages/ce/66/678e391fd96686b82f2e93ae7749bacb2c118525c072c6925af1f0084ee2/xraylib-4.2.1-cp314-cp314t-win_amd64.whl", hash = "sha256:f6c589d914f764f42a199ef9fe22e6331a4d7a6e241cb87c9d2d8e7f2f95634e", size = 14943752, upload-time = "2025-12-21T11:32:41.878Z" },
+]
+
+[[package]]
 name = "xrayspectrum"
 version = "0.1.0"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
+    { name = "matplotlib" },
     { name = "spekpy" },
+    { name = "xraylib" },
 ]
 
 [package.metadata]
-requires-dist = [{ name = "spekpy", specifier = ">=2.5.4" }]
+requires-dist = [
+    { name = "matplotlib", specifier = ">=3.9" },
+    { name = "spekpy", specifier = ">=2.5.4" },
+    { name = "xraylib", specifier = ">=4.2.1" },
+]
